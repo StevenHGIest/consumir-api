@@ -3,6 +3,8 @@ package edu.iest.consumir_api
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.Toast
 import edu.iest.consumir_api.models.ImagenRandom
 import edu.iest.consumir_api.networks.API
@@ -17,6 +19,20 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         traerImagenAleatoria()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_images, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    // Da funcionalidad a las opciones del menu
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.option_menu_list_imagenes) {
+            Toast.makeText(this, "Option menu 1", Toast.LENGTH_LONG).show()
+        }
+
+        return super.onOptionsItemSelected(item)
     }
 
     private fun traerImagenAleatoria(){
