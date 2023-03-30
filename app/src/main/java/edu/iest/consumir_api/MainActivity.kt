@@ -5,8 +5,11 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.ImageView
 import android.widget.Toast
+import com.squareup.picasso.Picasso
 import edu.iest.consumir_api.models.ImagenRandom
+import edu.iest.consumir_api.models.ListBreed
 import edu.iest.consumir_api.networks.API
 import retrofit2.Call
 import retrofit2.Callback
@@ -32,6 +35,30 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, "Option menu 1", Toast.LENGTH_LONG).show()
         }
 
+        val apiCall = API().crearServicioAPI()
+        apiCall.listaImagenesDePerrosPorRaza("hound").enqueue(object: Callback<ListBreed> {
+            override fun onResponse(call: Call<ListBreed>, response: Response<ListBreed>) {
+                // Logica
+                val dogs = response.body()?.message // Es un array
+                Log.d("Pruebas", "Status de la respuesta es ${response.body()?.status}")
+
+                // Si la operacion so soporta nulos se colapsa
+                if (dogs != null) {
+                    for (dog in dogs) {
+                        Log.d("Pruebas", "Perro es $dog")
+                    }
+                }
+
+                response.body()?.status
+            }
+
+            override fun onFailure(call: Call<ListBreed>, t: Throwable) {
+                TODO("Not yet implemented")
+            }
+
+        }
+    )
+
         return super.onOptionsItemSelected(item)
     }
 
@@ -42,9 +69,16 @@ class MainActivity : AppCompatActivity() {
             override fun onResponse(call: Call<ImagenRandom>, response: Response<ImagenRandom>) {
                 Log.d("API_PRUEBA ", "status es " + response.body()?.status)
                 Log.d("API_PRUEBA ", "message es " + response.body()?.message)
+                val ivDog = findViewById<ImageView>(R.id.ivDog)
                 for (url_imagen in response.body()?.message!!) {
                     Log.d("API_PRUEBA ", "imagen es " + url_imagen)
+
                 }
+                Picasso.get()
+                    .load(response.body()?.message!!)
+                    .resize(50, 50)
+                    .centerCrop()
+                    .into(ivDog)
             }
 
             // Si manda una peticion en los 400-500 se ejecuta esto
