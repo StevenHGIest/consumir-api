@@ -8,7 +8,6 @@ class API {
     // Ponemos la url base
     private val URL_BASE = "https://dog.ceo/api/"
 
-
     fun crearServicioAPI(): ApiInterface {
         val retrofit = Retrofit.Builder()
             .baseUrl(URL_BASE)

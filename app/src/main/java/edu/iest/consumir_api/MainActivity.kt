@@ -1,11 +1,14 @@
 package edu.iest.consumir_api
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.Button
 import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import com.squareup.picasso.Picasso
 import edu.iest.consumir_api.models.ImagenRandom
@@ -17,10 +20,19 @@ import retrofit2.Response
 import retrofit2.Retrofit
 
 class MainActivity : AppCompatActivity() {
+    private var tvRoute: TextView? = null
+    private lateinit var bnChange: Button
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        tvRoute = findViewById(R.id.tvRoute)
 
+        bnChange = findViewById(R.id.bnChangeA1)
+        bnChange?.setOnClickListener {
+            Toast.makeText(this, "a", Toast.LENGTH_LONG)
+            val i = Intent(this, SecondActivity::class.java)
+            startActivity(i)
+        }
         traerImagenAleatoria()
     }
 
@@ -76,9 +88,10 @@ class MainActivity : AppCompatActivity() {
                 }
                 Picasso.get()
                     .load(response.body()?.message!!)
-                    .resize(50, 50)
+                    .resize(500, 500)
                     .centerCrop()
                     .into(ivDog)
+                tvRoute?.text = "${tvRoute?.text}${response.body()?.message!!}"
             }
 
             // Si manda una peticion en los 400-500 se ejecuta esto
