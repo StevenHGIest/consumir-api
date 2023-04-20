@@ -7,7 +7,11 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.*
+import androidx.core.view.get
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
+import edu.iest.consumir_api.adapters.DogsAdapter
 import edu.iest.consumir_api.models.ListBreed
 import edu.iest.consumir_api.networks.API
 import retrofit2.Call
@@ -15,9 +19,10 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class SecondActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
-    private var ivImagen: ImageView? = null
+    private var recycler: RecyclerView? = null
     private var bnChange: Button? = null
     private var spBreed: Spinner? = null
+    private var selectedImages: ArrayList<String>? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_second)
@@ -28,11 +33,18 @@ class SecondActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
             startActivity(i)
         }
 
-        val adapter = ArrayAdapter.createFromResource(this, R.array.breeds, android.R.layout.simple_spinner_item)
+        recycler?.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        val adapter = ArrayAdapter.createFromResource(
+            this,
+            R.array.breeds,
+            android.R.layout.simple_spinner_item
+        )
         spBreed?.adapter = adapter
         spBreed?.onItemSelectedListener = this
-
+        if (selectedImages != null) {
+            recycler?.adapter = DogsAdapter(selectedImages!!, this@SecondActivity)
         }
+    }
 
     // Metodos Spinner
     override fun onItemSelected(vistaPadre: AdapterView<*>?, vistaRow: View?, posicion: Int, id: Long) {
@@ -53,29 +65,30 @@ class SecondActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
                 // Logica
                 val dogs = response.body()?.message // Es un arr
 
-                ivImagen = findViewById(R.id.ivImagen2)
-                val selectedImage = dogs?.get(0)
-                val preferencias = getSharedPreferences("PERSISTENCIA", MODE_PRIVATE)
+                selectedImages  = arrayListOf()
+                for (i in 1..3) {
+                    val image = dogs?.get(i)
+                    if (image != null) {
+                        selectedImages?.add(image)
+                    }
+                }
+
+                /*val preferencias = getSharedPreferences("PERSISTENCIA", MODE_PRIVATE)
                 val edit = preferencias.edit()
-                edit.putString(tipo, selectedImage)
-                edit.apply()
-                Picasso.get()
-                    .load(selectedImage)
-                    .resize(500, 500)
-                    .centerCrop()
-                    .into(ivImagen)
-                
+                edit.put|(tipo, selectedImage)
+                edit.apply()*/
+
                 response.body()?.status
             }
 
             override fun onFailure(call: Call<ListBreed>, t: Throwable) {
                 val preferences = getSharedPreferences("PERSISTENCIA", MODE_PRIVATE)
                 val selectedImage = preferences.getString(tipo, "").toString()
-                Picasso.get()
+                /*Picasso.get()
                     .load(selectedImage)
                     .resize(500, 500)
                     .centerCrop()
-                    .into(ivImagen)
+                    .into(ivImagen)*/
             }
 
         })

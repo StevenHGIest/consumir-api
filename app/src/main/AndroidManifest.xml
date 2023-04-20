@@ -15,6 +15,13 @@
         android:theme="@style/Theme.Consumir_Api"
         tools:targetApi="31">
         <activity
+            android:name=".Dog"
+            android:exported="false">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
             android:name=".SecondActivity"
             android:exported="false">
             <meta-data
